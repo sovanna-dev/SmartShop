@@ -1,0 +1,37 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Base.Theme.SmartShop"
+        parent="Theme.Material3.DayNight.NoActionBar">
+
+        <!-- Primary brand color -->
+        <item name="colorPrimary">#6200EE</item>
+        <item name="colorPrimaryVariant">#3700B3</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+
+        <!-- Secondary brand color -->
+        <item name="colorSecondary">#03DAC6</item>
+        <item name="colorSecondaryVariant">#018786</item>
+        <item name="colorOnSecondary">#000000</item>
+
+        <!-- Background -->
+        <item name="android:colorBackground">#F5F5F5</item>
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">#000000</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@color/purple_700</item>
+
+        <!-- Typography -->
+        <item name="android:fontFamily">sans-serif</item>
+
+    </style>
+
+    <style name="Theme.SmartShop" parent="Base.Theme.SmartShop"/>
+
+    <!-- Splash screen theme — no action bar, colored background -->
+    <style name="Theme.SmartShop.Splash" parent="Theme.SmartShop">
+        <item name="android:windowBackground">@color/purple_500</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+</resources>
