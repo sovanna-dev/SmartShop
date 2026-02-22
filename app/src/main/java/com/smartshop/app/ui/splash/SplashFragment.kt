@@ -37,24 +37,43 @@ class SplashFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        animateSplash()
+    }
 
-        // Animate logo on splash
+    private fun animateSplash() {
+        // Logo pops in
         binding.splashLogo.animate()
             .scaleX(1f)
             .scaleY(1f)
-            .setDuration(600)
+            .setDuration(500)
+            .setStartDelay(200)
             .start()
 
+        // Title fades in
         binding.splashTitle.animate()
             .alpha(1f)
-            .setDuration(600)
-            .setStartDelay(300)
+            .translationYBy(-10f)
+            .setDuration(500)
+            .setStartDelay(500)
             .start()
 
-        lifecycleScope.launch {
-            // Show splash for 2 seconds
-            delay(2000)
+        // Tagline fades in
+        binding.splashTagline.animate()
+            .alpha(0.8f)
+            .setDuration(400)
+            .setStartDelay(700)
+            .start()
 
+        // Dots fade in
+        binding.dotsContainer.animate()
+            .alpha(1f)
+            .setDuration(400)
+            .setStartDelay(900)
+            .start()
+
+        // Navigate after 2.5s
+        lifecycleScope.launch {
+            delay(2500)
             val isFirstLaunch = dataStoreManager.isFirstLaunch.first()
             val isLoggedIn = firebaseAuth.currentUser != null
 
