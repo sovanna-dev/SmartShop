@@ -93,6 +93,14 @@ hotfix/*    → urgent bug fixes
 MIT License — feel free to use this project for learning.
 
 ## Screenshots
-| Home | Product Detail | Cart |
-|------|---------------|------|
-| ![Figma Design](screenshots/figma-design.png) | ![Splash](screenshots/splash-light.png) | ![Home](screenshots/home.png) | ![Detail](screenshots/detail-light.png) | ![Cart](screenshots/cart-light.png) | 
+| Figma Design | Splash |
+|--------------|--------|
+| ![Figma Design](screenshots/figma-design.png) | ![Splash](screenshots/splash-light.png) |
+
+| Home | Detail |
+|------|--------|
+| ![Home](screenshots/home.png) | ![Detail](screenshots/detail-light.png) |
+
+| Cart |        |
+|------|--------|
+| ![Cart](screenshots/cart-light.png) |        |
