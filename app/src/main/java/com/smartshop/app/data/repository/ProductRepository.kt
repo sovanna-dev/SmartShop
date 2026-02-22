@@ -43,32 +43,6 @@ class ProductRepository @Inject constructor(
         awaitClose { listener.remove() }
     }
 
-    // Real-time filtered by category
-    fun getProductsByCategory(
-        category: String
-    ): Flow<Resource<List<Product>>> = callbackFlow {
-
-        trySend(Resource.Loading)
-
-        val listener = firestore
-            .collection("products")
-            .whereEqualTo("category", category)
-            .addSnapshotListener { snapshot, error ->
-
-                if (error != null) {
-                    trySend(Resource.Error(error.message ?: "Unknown error"))
-                    return@addSnapshotListener
-                }
-
-                val products = snapshot?.documents?.mapNotNull { doc ->
-                    doc.toObject(Product::class.java)?.copy(id = doc.id)
-                } ?: emptyList()
-
-                trySend(Resource.Success(products))
-            }
-
-        awaitClose { listener.remove() }
-    }
 
     // One-time fetch for product detail
     suspend fun getProductById(productId: String): Resource<Product> {

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -58,11 +59,9 @@ class HomeViewModel @Inject constructor(
     )
 
     // All unique categories from products
-    val categories = combine(
-        _products
-    ) { resources ->
-        val list = (resources[0] as? Resource.Success)?.data
-            ?: return@combine listOf("All")
+    val categories = _products.map { resource ->
+        val list = (resource as? Resource.Success)?.data
+            ?: return@map listOf("All")
         val cats = list.map { it.category }.distinct().sorted()
         listOf("All") + cats
     }.stateIn(

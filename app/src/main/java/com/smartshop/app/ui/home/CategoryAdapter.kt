@@ -10,7 +10,7 @@ class CategoryAdapter(
     private val onCategorySelected: (String) -> Unit
 ) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
-    private var categories = listOf<String>()
+    private var categories = mutableListOf<String>()
     private var selectedPosition = 0
 
     inner class CategoryViewHolder(
@@ -46,7 +46,7 @@ class CategoryAdapter(
     override fun getItemCount() = categories.size
 
     fun submitList(newCategories: List<String>) {
-        categories = newCategories
+        categories = newCategories.toMutableList()
         notifyDataSetChanged()
     }
 }

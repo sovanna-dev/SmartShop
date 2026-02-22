@@ -137,22 +137,25 @@ class HomeFragment : Fragment() {
             viewModel.products.collectLatest { state ->
                 when (state) {
                     is Resource.Loading -> {
-                        binding.shimmerView.visibility = View.VISIBLE
-                        binding.shimmerView.startShimmer()
-                        binding.productsRecyclerView.visibility = View.GONE
-                        binding.emptyText.visibility = View.GONE
+                        // Show shimmer, hide real list
+                        binding.shimmerView.visible()
+                        (binding.shimmerView as com.facebook.shimmer.ShimmerFrameLayout)
+                            .startShimmer()
+                        binding.productsRecyclerView.gone()
+                        binding.emptyText.gone()
                     }
-
                     is Resource.Success -> {
-                        binding.shimmerView.stopShimmer()
-                        binding.shimmerView.visibility = View.GONE
-                        binding.productsRecyclerView.visibility = View.VISIBLE
+                        // Stop shimmer, show real list
+                        (binding.shimmerView as com.facebook.shimmer.ShimmerFrameLayout)
+                            .stopShimmer()
+                        binding.shimmerView.gone()
+                        binding.productsRecyclerView.visible()
                     }
-
                     is Resource.Error -> {
-                        binding.shimmerView.stopShimmer()
-                        binding.shimmerView.visibility = View.GONE
-                        binding.emptyText.visibility = View.VISIBLE
+                        (binding.shimmerView as com.facebook.shimmer.ShimmerFrameLayout)
+                            .stopShimmer()
+                        binding.shimmerView.gone()
+                        binding.emptyText.visible()
                         binding.emptyText.text = state.message
                     }
                 }
