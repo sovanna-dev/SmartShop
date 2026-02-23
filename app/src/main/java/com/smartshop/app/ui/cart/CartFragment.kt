@@ -67,10 +67,8 @@ class CartFragment : Fragment() {
     }
 
     private fun setupToolbar() {
-        binding.toolbar.setNavigationIcon(
-            androidx.appcompat.R.drawable.abc_ic_ab_back_material
-        )
-        binding.toolbar.setNavigationOnClickListener {
+
+        binding.backButton.setOnClickListener {
             findNavController().popBackStack()
         }
     }
@@ -96,10 +94,13 @@ class CartFragment : Fragment() {
                             binding.emptyContainer.visible()
                             binding.cartRecyclerView.gone()
                             binding.checkoutButton.isEnabled = false
+                            binding.itemCountBadge.text = ""
                         } else {
                             binding.emptyContainer.gone()
                             binding.cartRecyclerView.visible()
                             binding.checkoutButton.isEnabled = true
+                            val totalItems = items.sumOf { it.quantity }
+                            binding.itemCountBadge.text = "$totalItems items"
                             cartAdapter.submitList(items)
                         }
                     }
@@ -116,6 +117,7 @@ class CartFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.cartTotal.collectLatest { total ->
                 binding.totalAmount.text = total.toCurrencyString()
+                binding.subtotalValue.text = total.toCurrencyString()
             }
         }
     }

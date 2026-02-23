@@ -4,52 +4,80 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#FFF8F5">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white">
+        android:background="#FFFFFF"
+        android:elevation="0dp"
+        app:elevation="0dp">
 
-        <!-- Top bar with title and cart -->
+        <!-- Top bar -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:paddingStart="20dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="8dp">
 
             <TextView
                 android:id="@+id/homeTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SmartShop"
-                android:textSize="22sp"
+                android:textSize="24sp"
                 android:textStyle="bold"
+                android:textColor="#1A0A00"
+                android:fontFamily="serif"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"/>
 
-            <!-- Cart Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/cartButton"
-                style="@style/Widget.Material3.Button.IconButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@android:drawable/ic_menu_sort_by_size"
+            <!-- Cart button -->
+            <FrameLayout
+                android:id="@+id/cartButtonContainer"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icon_button"
+                android:layout_marginEnd="4dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/logoutButton"/>
+                app:layout_constraintEnd_toStartOf="@id/logoutButtonContainer">
 
-            <!-- Logout Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/logoutButton"
-                style="@style/Widget.Material3.Button.IconButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@android:drawable/ic_lock_power_off"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/cartButton"
+                    style="@style/Widget.Material3.Button.IconButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    app:icon="@android:drawable/ic_menu_sort_by_size"
+                    app:iconTint="#E8420A"/>
+
+            </FrameLayout>
+
+            <!-- Logout button -->
+            <FrameLayout
+                android:id="@+id/logoutButtonContainer"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icon_button"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/logoutButton"
+                    style="@style/Widget.Material3.Button.IconButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    app:icon="@android:drawable/ic_lock_power_off"
+                    app:iconTint="#6B3A2A"/>
+
+            </FrameLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -61,8 +89,15 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="10dp"
             app:startIconDrawable="@android:drawable/ic_menu_search"
+            app:startIconTint="#B07060"
+            app:boxCornerRadiusTopStart="14dp"
+            app:boxCornerRadiusTopEnd="14dp"
+            app:boxCornerRadiusBottomStart="14dp"
+            app:boxCornerRadiusBottomEnd="14dp"
+            app:boxStrokeColor="#F0D5CC"
+            app:boxBackgroundColor="#FFF0EA"
             android:hint="Search products...">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -81,23 +116,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:clipToPadding="false"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Product grid -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/productsRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp"
-        android:clipToPadding="false"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
-
-    <!-- Shimmer loading placeholder -->
+    <!-- Shimmer loading -->
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmerView"
         android:layout_width="match_parent"
@@ -121,11 +146,11 @@
                     android:layout_height="220dp"
                     android:layout_weight="1"
                     android:layout_margin="8dp"
-                    app:cardCornerRadius="12dp">
+                    app:cardCornerRadius="16dp">
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#E0E0E0"/>
+                        android:background="#FFE8DE"/>
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
@@ -133,11 +158,11 @@
                     android:layout_height="220dp"
                     android:layout_weight="1"
                     android:layout_margin="8dp"
-                    app:cardCornerRadius="12dp">
+                    app:cardCornerRadius="16dp">
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#E0E0E0"/>
+                        android:background="#FFE8DE"/>
                 </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
@@ -153,11 +178,11 @@
                     android:layout_height="220dp"
                     android:layout_weight="1"
                     android:layout_margin="8dp"
-                    app:cardCornerRadius="12dp">
+                    app:cardCornerRadius="16dp">
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#E0E0E0"/>
+                        android:background="#FFE8DE"/>
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
@@ -165,11 +190,11 @@
                     android:layout_height="220dp"
                     android:layout_weight="1"
                     android:layout_margin="8dp"
-                    app:cardCornerRadius="12dp">
+                    app:cardCornerRadius="16dp">
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#E0E0E0"/>
+                        android:background="#FFE8DE"/>
                 </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
@@ -178,13 +203,14 @@
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 
-    <!-- Loading indicator -->
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
+    <!-- Products grid -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/productsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <!-- Empty state -->
     <TextView
@@ -194,7 +220,8 @@
         android:layout_gravity="center"
         android:text="No products found"
         android:textSize="16sp"
-        android:textColor="#888888"
-        android:visibility="gone"/>
+        android:textColor="#B07060"
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

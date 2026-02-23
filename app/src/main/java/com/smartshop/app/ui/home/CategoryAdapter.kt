@@ -33,6 +33,12 @@ class CategoryAdapter(
         val category = categories[position]
         holder.chip.text = category
         holder.chip.isChecked = position == selectedPosition
+        holder.chip.setTextColor(
+            if (position == selectedPosition)
+                android.graphics.Color.WHITE
+            else
+                android.graphics.Color.parseColor("#E8420A")
+        )
 
         holder.chip.setOnClickListener {
             val previous = selectedPosition

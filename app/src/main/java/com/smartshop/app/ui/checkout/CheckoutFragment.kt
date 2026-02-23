@@ -49,6 +49,10 @@ class CheckoutFragment : Fragment() {
         binding.placeOrderButton.setOnClickListener {
             validateAndPlaceOrder()
         }
+
+        binding.backButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun observeCart() {

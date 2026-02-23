@@ -4,22 +4,72 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#FFF8F5">
 
-    <!-- Toolbar -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <!-- Header -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:elevation="4dp"
-        app:title="My Cart"
-        app:titleTextAppearance="?attr/textAppearanceTitleLarge"
+        android:background="#FFFFFF"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Cart Items List -->
+        <!-- Back button -->
+        <FrameLayout
+            android:id="@+id/backContainer"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_icon_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/backButton"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                app:icon="@android:drawable/ic_media_previous"
+                app:iconTint="#1A0A00"/>
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/cartTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My Cart"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#1A0A00"
+            android:fontFamily="serif"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Item count badge -->
+        <TextView
+            android:id="@+id/itemCountBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="#E8420A"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Cart items list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cartRecyclerView"
         android:layout_width="0dp"
@@ -27,8 +77,8 @@
         android:paddingTop="12dp"
         android:paddingBottom="12dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toTopOf="@id/bottomContainer"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/bottomSheet"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -38,12 +88,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        app:indicatorColor="#E8420A"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Empty State -->
+    <!-- Empty state -->
     <LinearLayout
         android:id="@+id/emptyContainer"
         android:layout_width="wrap_content"
@@ -60,64 +111,135 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="🛒"
-            android:textSize="48sp"/>
+            android:textSize="56sp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Your cart is empty"
             android:textSize="18sp"
-            android:textColor="#888888"
-            android:layout_marginTop="8dp"/>
+            android:textColor="#B07060"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add some products to get started"
+            android:textSize="14sp"
+            android:textColor="#B07060"
+            android:layout_marginTop="4dp"/>
 
     </LinearLayout>
 
-    <!-- Bottom Summary -->
+    <!-- Bottom summary sheet -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/bottomContainer"
+        android:id="@+id/bottomSheet"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:padding="16dp"
-        android:elevation="8dp"
+        android:background="@drawable/bg_bottom_sheet"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="32dp"
+        android:elevation="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Total Label -->
+        <!-- Subtotal row -->
+        <TextView
+            android:id="@+id/subtotalLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Subtotal"
+            android:textSize="14sp"
+            android:textColor="#6B3A2A"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/subtotalValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#1A0A00"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Delivery row -->
+        <TextView
+            android:id="@+id/deliveryLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delivery"
+            android:textSize="14sp"
+            android:textColor="#6B3A2A"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/subtotalLabel"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/deliveryValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Free"
+            android:textSize="14sp"
+            android:textColor="#2ECC71"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/subtotalValue"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Divider -->
+        <View
+            android:id="@+id/summaryDivider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="#F0D5CC"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/deliveryLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Total row -->
         <TextView
             android:id="@+id/totalLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Total:"
+            android:text="Total"
             android:textSize="18sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:textStyle="bold"
+            android:textColor="#1A0A00"
+            android:fontFamily="serif"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/summaryDivider"
             app:layout_constraintStart_toStartOf="parent"/>
 
-        <!-- Total Amount -->
         <TextView
             android:id="@+id/totalAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="@color/purple_500"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/totalLabel"
-            android:layout_marginStart="8dp"/>
+            android:textColor="#E8420A"
+            android:fontFamily="serif"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/summaryDivider"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Checkout Button -->
+        <!-- Checkout button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/checkoutButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Checkout"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:text="Proceed to Checkout →"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:backgroundTint="#E8420A"
+            android:layout_marginTop="20dp"
+            app:cornerRadius="16dp"
+            app:layout_constraintTop_toBottomOf="@id/totalLabel"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

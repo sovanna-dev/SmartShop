@@ -14,6 +14,8 @@ import com.smartshop.app.R
 import com.smartshop.app.data.model.Product
 import com.smartshop.app.data.model.Resource
 import com.smartshop.app.databinding.FragmentProductDetailBinding
+import com.smartshop.app.ui.cart.CartViewModel
+import com.smartshop.app.utils.showSnackbar
 import com.smartshop.app.utils.toCurrencyString
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -29,6 +31,8 @@ class ProductDetailFragment : Fragment() {
 
     // Safe Args — automatically reads productId from navigation
     private val args: ProductDetailFragmentArgs by navArgs()
+    private val cartViewModel: CartViewModel by viewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +41,8 @@ class ProductDetailFragment : Fragment() {
     ): View {
         _binding = FragmentProductDetailBinding.inflate(inflater, container, false)
         return binding.root
+
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -50,6 +56,13 @@ class ProductDetailFragment : Fragment() {
         }
 
         observeProduct()
+
+        binding.addToCartButton.setOnClickListener {
+            val product = (viewModel.product.value as? Resource.Success)?.data
+                ?: return@setOnClickListener
+            cartViewModel.addToCart(product)
+            binding.root.showSnackbar("${product.name} added to cart")
+        }
     }
 
     private fun observeProduct() {

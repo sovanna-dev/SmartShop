@@ -64,12 +64,7 @@ class SplashFragment : Fragment() {
             .setStartDelay(700)
             .start()
 
-        // Dots fade in
-        binding.dotsContainer.animate()
-            .alpha(1f)
-            .setDuration(400)
-            .setStartDelay(900)
-            .start()
+
 
         // Navigate after 2.5s
         lifecycleScope.launch {

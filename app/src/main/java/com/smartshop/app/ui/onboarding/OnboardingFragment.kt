@@ -23,15 +23,13 @@ class OnboardingFragment : Fragment() {
     private var _binding: FragmentOnboardingBinding? = null
     private val binding get() = _binding!!
 
-    // Hilt injects this automatically
     @Inject
     lateinit var dataStoreManager: DataStoreManager
 
-    // Define the 3 onboarding pages
     private val pages = listOf(
         OnboardingPage(
             imageRes = R.mipmap.ic_launcher,
-            title = "Discover Products",
+            title = "Discover Amazing",
             description = "Browse thousands of products across all categories at the best prices."
         ),
         OnboardingPage(
@@ -46,6 +44,9 @@ class OnboardingFragment : Fragment() {
         )
     )
 
+    // Split titles into two lines for design effect
+    private val titleHighlights = listOf("Products", "Experience", "Guaranteed")
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,37 +58,45 @@ class OnboardingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupViewPager()
         setupIndicatorDots()
         setupButtons()
+        updateContent(0)
     }
 
     private fun setupViewPager() {
-        val adapter = OnboardingAdapter(pages)
-        binding.viewPager.adapter = adapter
+        val adapter = OnboardingImageAdapter(pages)
+        binding.viewPagerImage.adapter = adapter
 
-        // Listen for page changes
-        binding.viewPager.registerOnPageChangeCallback(
+        binding.viewPagerImage.registerOnPageChangeCallback(
             object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     updateIndicatorDots(position)
                     updateButtons(position)
+                    updateContent(position)
                 }
             }
         )
     }
 
+    private fun updateContent(position: Int) {
+        binding.pageTitle.text = pages[position].title
+        binding.pageTitleHighlight.text = titleHighlights[position]
+        binding.pageDescription.text = pages[position].description
+    }
+
     private fun setupIndicatorDots() {
-        // Create one dot per page
         pages.forEachIndexed { index, _ ->
             val dot = ImageView(requireContext())
             dot.setImageResource(
-                if (index == 0) R.drawable.dot_active
-                else R.drawable.dot_inactive
+                if (index == 0) R.drawable.dot_active_orange
+                else R.drawable.dot_inactive_orange
             )
-            val params = ViewGroup.MarginLayoutParams(24, 24)
-            params.setMargins(8, 0, 8, 0)
+            val params = android.widget.LinearLayout.LayoutParams(
+                if (index == 0) 24 else 20,
+                if (index == 0) 24 else 20
+            )
+            params.setMargins(0, 0, 12, 0)
             dot.layoutParams = params
             binding.indicatorDots.addView(dot)
         }
@@ -96,46 +105,40 @@ class OnboardingFragment : Fragment() {
     private fun updateIndicatorDots(position: Int) {
         for (i in 0 until binding.indicatorDots.childCount) {
             val dot = binding.indicatorDots.getChildAt(i) as ImageView
+            val isActive = i == position
             dot.setImageResource(
-                if (i == position) R.drawable.dot_active
-                else R.drawable.dot_inactive
+                if (isActive) R.drawable.dot_active_orange
+                else R.drawable.dot_inactive_orange
             )
+            val size = if (isActive) 24 else 20
+            val params = android.widget.LinearLayout.LayoutParams(size, size)
+            params.setMargins(0, 0, 12, 0)
+            dot.layoutParams = params
         }
     }
-
     private fun setupButtons() {
         binding.nextButton.setOnClickListener {
-            val current = binding.viewPager.currentItem
+            val current = binding.viewPagerImage.currentItem
             if (current < pages.size - 1) {
-                binding.viewPager.currentItem = current + 1
+                binding.viewPagerImage.currentItem = current + 1
             }
         }
 
-        binding.skipButton.setOnClickListener {
-            navigateToLogin()
-        }
-
-        binding.getStartedButton.setOnClickListener {
-            navigateToLogin()
-        }
+        binding.skipButton.setOnClickListener { navigateToLogin() }
+        binding.getStartedButton.setOnClickListener { navigateToLogin() }
     }
 
     private fun updateButtons(position: Int) {
         val isLastPage = position == pages.size - 1
-
-        // Last page: hide Next/Skip, show Get Started
         binding.nextButton.visibility = if (isLastPage) View.GONE else View.VISIBLE
         binding.skipButton.visibility = if (isLastPage) View.GONE else View.VISIBLE
         binding.getStartedButton.visibility = if (isLastPage) View.VISIBLE else View.GONE
     }
 
     private fun navigateToLogin() {
-        // Save that onboarding is done — never show again
         lifecycleScope.launch {
             dataStoreManager.setFirstLaunchDone()
-            findNavController().navigate(
-                R.id.action_onboarding_to_login
-            )
+            findNavController().navigate(R.id.action_onboarding_to_login)
         }
     }
 

@@ -51,10 +51,7 @@ class OrdersFragment : Fragment() {
     }
 
     private fun setupToolbar() {
-        binding.toolbar.setNavigationIcon(
-            androidx.appcompat.R.drawable.abc_ic_ab_back_material
-        )
-        binding.toolbar.setNavigationOnClickListener {
+        binding.backButton.setOnClickListener {
             findNavController().popBackStack()
         }
     }
