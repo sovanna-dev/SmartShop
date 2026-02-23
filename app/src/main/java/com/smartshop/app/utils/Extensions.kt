@@ -1,5 +1,5 @@
 package com.smartshop.app.utils
-
+// Extensions.kt
 import android.util.Patterns
 import android.view.View
 import com.google.android.material.snackbar.Snackbar

@@ -21,7 +21,7 @@ import com.smartshop.app.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import com.facebook.shimmer.ShimmerFrameLayout
+
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
@@ -54,9 +54,11 @@ class HomeFragment : Fragment() {
         observeCategories()
         observeFilteredProducts()
 
-        binding.homeTitle.setOnLongClickListener {
-            findNavController().navigate(R.id.action_home_to_orders)
-            true
+
+        // Shopping list button — long press title already goes to orders
+       // Add a dedicated button or use the cart icon area
+        binding.homeTitle.setOnClickListener {
+            findNavController().navigate(R.id.action_home_to_shoppingLists)
         }
 
     }

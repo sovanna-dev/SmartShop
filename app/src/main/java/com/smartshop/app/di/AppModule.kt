@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.smartshop.app.data.repository.CartRepository
 import com.smartshop.app.data.repository.OrderRepository
 import com.smartshop.app.data.repository.ProductRepository
+import com.smartshop.app.data.repository.ShoppingListRepository
 import com.smartshop.app.utils.DataStoreManager
 import dagger.Module
 import dagger.Provides
@@ -64,4 +65,11 @@ object AppModule{
     ): OrderRepository {
         return OrderRepository(firestore, auth)
     }
+
+    @Provides
+    @Singleton
+    fun provideShoppingListRepository(
+        firestore: FirebaseFirestore,
+        auth: FirebaseAuth
+    ): ShoppingListRepository = ShoppingListRepository(firestore, auth)
 }
