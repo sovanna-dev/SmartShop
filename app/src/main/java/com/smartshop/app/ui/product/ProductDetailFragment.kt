@@ -20,6 +20,7 @@ import com.smartshop.app.utils.toCurrencyString
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import com.smartshop.app.ui.product.ProductDetailFragmentDirections
 
 @AndroidEntryPoint
 class ProductDetailFragment : Fragment() {
@@ -62,6 +63,14 @@ class ProductDetailFragment : Fragment() {
                 ?: return@setOnClickListener
             cartViewModel.addToCart(product)
             binding.root.showSnackbar("${product.name} added to cart")
+        }
+
+        binding.comparePricesButton.setOnClickListener {
+            val product = (viewModel.product.value as? Resource.Success)?.data
+                ?: return@setOnClickListener
+            val action = ProductDetailFragmentDirections
+                .actionProductDetailToPriceCompare(product.name)
+            findNavController().navigate(action)
         }
     }
 

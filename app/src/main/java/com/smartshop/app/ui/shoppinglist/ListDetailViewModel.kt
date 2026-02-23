@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.smartshop.app.data.model.ShoppingListItem
 import com.smartshop.app.data.repository.ShoppingListRepository
-import com.smartshop.app.utils.Resource
+import com.smartshop.app.data.model.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

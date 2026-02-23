@@ -14,7 +14,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.smartshop.app.R
 import com.smartshop.app.databinding.FragmentShoppingListsBinding
-import com.smartshop.app.utils.Resource
+import com.smartshop.app.data.model.Resource
 import com.smartshop.app.utils.gone
 import com.smartshop.app.utils.showSnackbar
 import com.smartshop.app.utils.visible

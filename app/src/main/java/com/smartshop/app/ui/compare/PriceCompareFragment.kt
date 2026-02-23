@@ -1,4 +1,4 @@
-package com.smartshop.app.ui.shoppinglist
+package com.smartshop.app.ui.compare
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,55 +10,52 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.smartshop.app.data.model.ShoppingListItem
-import com.smartshop.app.databinding.FragmentListDetailBinding
+import com.smartshop.app.databinding.FragmentPriceCompareBinding
+import com.smartshop.app.ui.cart.CartViewModel
 import com.smartshop.app.data.model.Resource
 import com.smartshop.app.utils.gone
 import com.smartshop.app.utils.showSnackbar
+import com.smartshop.app.utils.toCurrencyString
 import com.smartshop.app.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ListDetailFragment : Fragment() {
+class PriceCompareFragment : Fragment() {
 
-    private var _binding: FragmentListDetailBinding? = null
+    private var _binding: FragmentPriceCompareBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: ListDetailViewModel by viewModels()
-    private val args: ListDetailFragmentArgs by navArgs()
-    private lateinit var itemAdapter: ListItemAdapter
+    private val viewModel: PriceCompareViewModel by viewModels()
+    private val cartViewModel: CartViewModel by viewModels()
+    private val args: PriceCompareFragmentArgs by navArgs()
+    private lateinit var compareAdapter: PriceCompareAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentListDetailBinding.inflate(inflater, container, false)
+        _binding = FragmentPriceCompareBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.listTitle.text = args.listName
-        viewModel.loadItems(args.listId)
+        binding.compareTitle.text = args.productName
+        viewModel.loadComparisons(args.productName)
         setupRecyclerView()
         setupButtons()
-        observeItems()
+        observeProducts()
     }
 
     private fun setupRecyclerView() {
-        itemAdapter = ListItemAdapter(
-            onCheckedChange = { item, isChecked ->
-                viewModel.toggleChecked(item.id, isChecked)
-            },
-            onRemoveClick = { item ->
-                viewModel.removeItem(item.id)
-            }
-        )
-        binding.itemsRecyclerView.apply {
-            adapter = itemAdapter
+        compareAdapter = PriceCompareAdapter { product ->
+            cartViewModel.addToCart(product)
+            binding.root.showSnackbar("Added from ${product.store} ✓")
+        }
+        binding.compareRecyclerView.apply {
+            adapter = compareAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
     }
@@ -67,38 +64,35 @@ class ListDetailFragment : Fragment() {
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
         }
-        binding.addItemFab.setOnClickListener {
-            showAddItemDialog()
-        }
     }
 
-    private fun showAddItemDialog() {
-        // Navigate to product picker — user picks from existing products
-        findNavController().navigate(
-            ListDetailFragmentDirections.actionListDetailToProductPicker(args.listId)
-        )
-    }
-
-    private fun observeItems() {
+    private fun observeProducts() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.items.collectLatest { state ->
+            viewModel.products.collectLatest { state ->
                 when (state) {
                     is Resource.Loading -> {
                         binding.progressBar.visible()
-                        binding.emptyContainer.gone()
                     }
                     is Resource.Success -> {
                         binding.progressBar.gone()
-                        val items = state.data
-                        if (items.isEmpty()) {
-                            binding.emptyContainer.visible()
-                            binding.itemsRecyclerView.gone()
+                        val products = state.data
+
+                        if (products.isEmpty()) return@collectLatest
+
+                        compareAdapter.submitListWithCheapest(products)
+                        binding.storeCountLabel.text =
+                            "Available in ${products.size} stores"
+
+                        // Savings banner
+                        if (products.size > 1) {
+                            val cheapest = products.first().price
+                            val mostExpensive = products.last().price
+                            val savings = mostExpensive - cheapest
+                            binding.savingsText.text =
+                                "You can save up to ${savings.toCurrencyString()} " +
+                                        "by choosing the cheapest store"
                         } else {
-                            binding.emptyContainer.gone()
-                            binding.itemsRecyclerView.visible()
-                            itemAdapter.submitList(items)
-                            val checked = items.count { it.isChecked }
-                            binding.progressSummary.text = "$checked/${items.size}"
+                            binding.summaryBanner.gone()
                         }
                     }
                     is Resource.Error -> {

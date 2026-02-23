@@ -97,6 +97,9 @@
         <argument
             android:name="productId"
             app:argType="string"/>
+        <action
+            android:id="@+id/action_productDetail_to_priceCompare"
+            app:destination="@id/priceCompareFragment"/>
     </fragment>
 
     <!-- Cart -->
@@ -167,6 +170,16 @@
         tools:layout="@layout/fragment_product_picker">
         <argument
             android:name="listId"
+            app:argType="string"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/priceCompareFragment"
+        android:name="com.smartshop.app.ui.compare.PriceCompareFragment"
+        android:label="PriceCompareFragment"
+        tools:layout="@layout/fragment_price_compare">
+        <argument
+            android:name="productName"
             app:argType="string"/>
     </fragment>
 </navigation>

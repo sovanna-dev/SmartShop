@@ -233,4 +233,19 @@
         android:backgroundTint="#E8420A"
         app:cornerRadius="16dp"/>
 
+    <!-- Compare prices button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/comparePricesButton"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="92dp"
+        android:text="🏪 Compare Prices"
+        android:textSize="15sp"
+        android:textColor="#E8420A"
+        app:strokeColor="#E8420A"
+        app:cornerRadius="16dp"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

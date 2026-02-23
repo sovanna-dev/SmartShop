@@ -10,5 +10,6 @@ data class Product(
     val category: String = "",
     val stock: Int = 0,
     val rating: Float = 0f,
-    val reviewCount: Int = 0
+    val reviewCount: Int = 0,
+    val store: String = ""
 )

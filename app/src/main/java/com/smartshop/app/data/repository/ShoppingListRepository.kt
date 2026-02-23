@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.smartshop.app.data.model.ShoppingList
 import com.smartshop.app.data.model.ShoppingListItem
-import com.smartshop.app.utils.Resource
+import com.smartshop.app.data.model.Resource
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

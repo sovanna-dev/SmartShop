@@ -13,7 +13,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.smartshop.app.data.model.ShoppingListItem
 import com.smartshop.app.databinding.FragmentProductPickerBinding
-import com.smartshop.app.utils.Resource
+import com.smartshop.app.data.model.Resource
 import com.smartshop.app.utils.gone
 import com.smartshop.app.utils.showSnackbar
 import com.smartshop.app.utils.visible

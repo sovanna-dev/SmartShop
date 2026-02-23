@@ -61,4 +61,26 @@ class ProductRepository @Inject constructor(
             Resource.Error(e.message ?: "Error fetching product")
         }
     }
+
+    // Get all products with the same name — for price comparison
+    fun getProductsByName(name: String): Flow<Resource<List<Product>>> = callbackFlow {
+        trySend(Resource.Loading)
+
+        val listener = firestore
+            .collection("products")
+            .whereEqualTo("name", name)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(Resource.Error(error.message ?: "Unknown error"))
+                    return@addSnapshotListener
+                }
+                val products = snapshot?.documents?.mapNotNull { doc ->
+                    doc.toObject(Product::class.java)?.copy(id = doc.id)
+                } ?: emptyList()
+                // Sort by price — cheapest first
+                trySend(Resource.Success(products.sortedBy { it.price }))
+            }
+
+        awaitClose { listener.remove() }
+    }
 }
