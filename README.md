@@ -65,7 +65,7 @@ com.smartshop.app/
 
 1. Clone the repository
 ```bash
-git clone https://github.com/YOURUSERNAME/SmartShop.git
+git clone https://github.com/sovanna-dev/SmartShop.git
 ```
 
 2. Create a Firebase project at console.firebase.google.com
