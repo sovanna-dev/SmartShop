@@ -88,20 +88,35 @@ class ShoppingListRepository @Inject constructor(
         item: ShoppingListItem
     ): Resource<Unit> {
         return try {
-            val itemMap = hashMapOf(
-                "productId" to item.productId,
-                "name" to item.name,
-                "quantity" to item.quantity,
-                "price" to item.price,
-                "imageUrl" to item.imageUrl,
-                "isChecked" to false,
-                "addedAt" to Timestamp.now()
-            )
-            itemsRef(listId).add(itemMap).await()
-            // Update total items count
-            listsRef().document(listId)
-                .update("totalItems", com.google.firebase.firestore.FieldValue.increment(1))
+            // Check if item with same productId already exists
+            val existingItemQuery = itemsRef(listId)
+                .whereEqualTo("productId", item.productId)
+                .get()
                 .await()
+
+            if (!existingItemQuery.isEmpty) {
+                // Item exists, increment quantity
+                val existingDoc = existingItemQuery.documents[0]
+                itemsRef(listId).document(existingDoc.id)
+                    .update("quantity", com.google.firebase.firestore.FieldValue.increment(item.quantity.toLong()))
+                    .await()
+            } else {
+                // Item doesn't exist, add new
+                val itemMap = hashMapOf(
+                    "productId" to item.productId,
+                    "name" to item.name,
+                    "quantity" to item.quantity,
+                    "price" to item.price,
+                    "imageUrl" to item.imageUrl,
+                    "isChecked" to false,
+                    "addedAt" to Timestamp.now()
+                )
+                itemsRef(listId).add(itemMap).await()
+                // Update total items count
+                listsRef().document(listId)
+                    .update("totalItems", com.google.firebase.firestore.FieldValue.increment(1))
+                    .await()
+            }
             Resource.Success(Unit)
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Failed to add item")
@@ -133,15 +148,26 @@ class ShoppingListRepository @Inject constructor(
     }
 
     // Remove item from list
-    suspend fun removeItem(listId: String, itemId: String): Resource<Unit> {
+    suspend fun removeItem(
+        listId: String,
+        itemId: String,
+        isChecked: Boolean
+    ): Resource<Unit> {
         return try {
             itemsRef(listId).document(itemId).delete().await()
-            listsRef().document(listId)
-                .update(
-                    "totalItems",
+
+            // Update total items count
+            val updateData = mutableMapOf<String, Any>(
+                "totalItems" to com.google.firebase.firestore.FieldValue.increment(-1)
+            )
+
+            // If item was checked, also decrement checked items count
+            if (isChecked) {
+                updateData["checkedItems"] =
                     com.google.firebase.firestore.FieldValue.increment(-1)
-                )
-                .await()
+            }
+
+            listsRef().document(listId).update(updateData).await()
             Resource.Success(Unit)
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Failed to remove item")

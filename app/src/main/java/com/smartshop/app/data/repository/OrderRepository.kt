@@ -72,7 +72,19 @@ class OrderRepository @Inject constructor(
                 }
 
                 val orders = snapshot?.documents?.mapNotNull { doc ->
-                    doc.toObject(Order::class.java)?.copy(id = doc.id)
+                    try {
+                        val order = doc.toObject(Order::class.java) ?: return@mapNotNull null
+                        // Convert status string to enum safely
+                        val statusString = doc.getString("status") ?: OrderStatus.PENDING.name
+                        val status = try {
+                            OrderStatus.valueOf(statusString)
+                        } catch (e: Exception) {
+                            OrderStatus.PENDING
+                        }
+                        order.copy(id = doc.id, status = status)
+                    } catch (e: Exception) {
+                        null
+                    }
                 } ?: emptyList()
 
                 trySend(Resource.Success(orders))

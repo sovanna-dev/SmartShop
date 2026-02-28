@@ -8,6 +8,7 @@ import com.smartshop.app.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -31,33 +32,47 @@ class HomeViewModel @Inject constructor(
     // Selected category filter
     private val _selectedCategory = MutableStateFlow("All")
     val selectedCategory = _selectedCategory.asStateFlow()
+    private val _selectedStore = MutableStateFlow("All")
+    val selectedStore: StateFlow<String> = _selectedStore
 
+    fun setSelectedStore(store: String) {
+        _selectedStore.value = store
+    }
     // Filtered list — auto updates when products, search, or category changes
     val filteredProducts = combine(
         _products,
         _searchQuery,
-        _selectedCategory
-    ) { resource, query, category ->
-
-        val list = (resource as? Resource.Success)?.data
-            ?: return@combine emptyList()
-
+        _selectedCategory,
+        _selectedStore
+    ) { resource, query, category, store ->
+        val list = (resource as? Resource.Success)?.data ?: return@combine emptyList()
         list.filter { product ->
             val matchesSearch = query.isEmpty() ||
-                    product.name.contains(query, ignoreCase = true) ||
-                    product.description.contains(query, ignoreCase = true)
-
+                    product.name.contains(query, ignoreCase = true)
             val matchesCategory = category == "All" ||
                     product.category == category
-
-            matchesSearch && matchesCategory
+            val matchesStore = store == "All" ||
+                    product.store == store
+            matchesSearch && matchesCategory && matchesStore
         }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
-
+    val stores = _products.map { resource ->
+        val list = (resource as? Resource.Success)?.data
+            ?: return@map listOf("All")
+        val storeList = list.map { it.store }
+            .filter { it.isNotEmpty() }
+            .distinct()
+            .sorted()
+        listOf("All") + storeList
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = listOf("All")
+    )
     // All unique categories from products
     val categories = _products.map { resource ->
         val list = (resource as? Resource.Success)?.data

@@ -27,8 +27,8 @@ class ProductPickerFragment : Fragment() {
     private var _binding: FragmentProductPickerBinding? = null
     private val binding get() = _binding!!
 
-    // Reuse HomeViewModel for products + ListDetailViewModel for adding
-    private val listViewModel: ListDetailViewModel by viewModels()
+    // Reuse HomeViewModel for products + ShoppingListItemViewModel for adding
+    private val listViewModel: ShoppingListItemViewModel by viewModels()
     private val pickerViewModel: com.smartshop.app.ui.home.HomeViewModel by viewModels()
 
     private val args: ProductPickerFragmentArgs by navArgs()
@@ -50,6 +50,25 @@ class ProductPickerFragment : Fragment() {
         setupSearch()
         setupButtons()
         observeProducts()
+        observeAddState()
+    }
+
+    private fun observeAddState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            listViewModel.addState.collectLatest { state ->
+                when (state) {
+                    is Resource.Success -> {
+                        binding.root.showSnackbar("Added to list ✓")
+                        listViewModel.resetAddState()
+                    }
+                    is Resource.Error -> {
+                        binding.root.showSnackbar(state.message)
+                        listViewModel.resetAddState()
+                    }
+                    else -> {}
+                }
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -62,7 +81,6 @@ class ProductPickerFragment : Fragment() {
                 imageUrl = product.imageUrl
             )
             listViewModel.addItem(item)
-            binding.root.showSnackbar("${product.name} added to list ✓")
         }
         binding.productsRecyclerView.apply {
             adapter = pickerAdapter

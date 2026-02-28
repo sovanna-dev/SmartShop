@@ -55,4 +55,6 @@ class CategoryAdapter(
         categories = newCategories.toMutableList()
         notifyDataSetChanged()
     }
+
+
 }

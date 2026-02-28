@@ -33,6 +33,7 @@ class HomeFragment : Fragment() {
     private lateinit var categoryAdapter: CategoryAdapter
     private val cartViewModel: CartViewModel by viewModels()
     private val authViewModel: AuthViewModel by viewModels()
+    private lateinit var storeAdapter: CategoryAdapter
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -49,34 +50,49 @@ class HomeFragment : Fragment() {
         setupCategoryRecyclerView()
         setupSearch()
         setupCartButton()
-        setupLogoutButton()
+        setupProfileButton()
         observeProducts()
         observeCategories()
         observeFilteredProducts()
-
+        setupStoreChips()
+        observeStores()
 
         // Shopping list button — long press title already goes to orders
        // Add a dedicated button or use the cart icon area
         binding.homeTitle.setOnClickListener {
             findNavController().navigate(R.id.action_home_to_shoppingLists)
         }
+        binding.trackButton.setOnClickListener {
+            findNavController().navigate(R.id.action_home_to_orders)
+        }
+
+
 
     }
+    private fun setupStoreChips() {
+        storeAdapter = CategoryAdapter { store ->
+            viewModel.setSelectedStore(store)
+        }
+        binding.storeRecyclerView.apply {
+            adapter = storeAdapter
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+        }
+    }
 
-    private fun setupLogoutButton() {
-        binding.logoutButton.setOnClickListener {
-            // Show confirmation dialog
-            androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle("Logout")
-                .setMessage("Are you sure you want to logout?")
-                .setPositiveButton("Logout") { _, _ ->
-                    authViewModel.logout()
-                    findNavController().navigate(
-                        R.id.action_splash_to_login
-                    )
-                }
-                .setNegativeButton("Cancel", null)
-                .show()
+    private fun observeStores() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.stores.collectLatest { stores ->
+                storeAdapter.submitList(stores)
+            }
+        }
+    }
+    private fun setupProfileButton() {
+        binding.profileButton.setOnClickListener {
+            findNavController().navigate(R.id.action_home_to_profile)
         }
     }
 

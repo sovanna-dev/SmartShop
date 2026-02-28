@@ -8,45 +8,53 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.smartshop.app.data.model.ShoppingListItem
-import com.smartshop.app.databinding.ItemListItemBinding
+import com.smartshop.app.databinding.ItemShoppingListItemBinding
+
 import com.smartshop.app.utils.toCurrencyString
 
-class ListItemAdapter(
+class ShoppingListItemAdapter(
     private val onCheckedChange: (ShoppingListItem, Boolean) -> Unit,
-    private val onRemoveClick: (ShoppingListItem) -> Unit
-) : ListAdapter<ShoppingListItem, ListItemAdapter.ItemViewHolder>(DiffCallback()) {
+    private val onDeleteClick: (ShoppingListItem) -> Unit
+) : ListAdapter<ShoppingListItem, ShoppingListItemAdapter.ItemViewHolder>(DiffCallback()) {
 
     inner class ItemViewHolder(
-        private val binding: ItemListItemBinding
+        private val binding: ItemShoppingListItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ShoppingListItem) {
             binding.itemName.text = item.name
             binding.itemPrice.text = item.price.toCurrencyString()
-            binding.itemQuantity.text = "Qty: ${item.quantity}"
-            binding.itemCheckbox.isChecked = item.isChecked
+            binding.itemQty.text = "Qty: ${item.quantity}"
 
-            // Strike through if checked
-            if (item.isChecked) {
-                binding.itemName.paintFlags =
-                    binding.itemName.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                binding.root.alpha = 0.6f
-            } else {
-                binding.itemName.paintFlags =
-                    binding.itemName.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-                binding.root.alpha = 1.0f
-            }
-
+            // Load image
             Glide.with(binding.root)
                 .load(item.imageUrl)
                 .placeholder(android.R.drawable.ic_menu_gallery)
                 .into(binding.itemImage)
 
-            binding.itemCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            // Strikethrough if checked
+            if (item.isChecked) {
+                binding.itemName.paintFlags =
+                    binding.itemName.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                binding.itemPrice.paintFlags =
+                    binding.itemPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                binding.root.alpha = 0.5f
+            } else {
+                binding.itemName.paintFlags =
+                    binding.itemName.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+                binding.itemPrice.paintFlags =
+                    binding.itemPrice.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+                binding.root.alpha = 1f
+            }
+
+            // Prevent listener firing during bind
+            binding.checkbox.setOnCheckedChangeListener(null)
+            binding.checkbox.isChecked = item.isChecked
+            binding.checkbox.setOnCheckedChangeListener { _, isChecked ->
                 onCheckedChange(item, isChecked)
             }
 
-            binding.removeButton.setOnClickListener { onRemoveClick(item) }
+            binding.deleteButton.setOnClickListener { onDeleteClick(item) }
         }
     }
 
@@ -58,7 +66,7 @@ class ListItemAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val binding = ItemListItemBinding.inflate(
+        val binding = ItemShoppingListItemBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
         return ItemViewHolder(binding)
@@ -66,4 +74,9 @@ class ListItemAdapter(
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) =
         holder.bind(getItem(position))
+
+    // Unchecked items first, checked items at bottom
+    fun submitSorted(items: List<ShoppingListItem>) {
+        submitList(items.sortedBy { it.isChecked })
+    }
 }

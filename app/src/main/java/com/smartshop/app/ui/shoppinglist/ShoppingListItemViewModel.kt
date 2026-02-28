@@ -3,8 +3,8 @@ package com.smartshop.app.ui.shoppinglist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.smartshop.app.data.model.ShoppingListItem
-import com.smartshop.app.data.repository.ShoppingListRepository
 import com.smartshop.app.data.model.Resource
+import com.smartshop.app.data.repository.ShoppingListRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ListDetailViewModel @Inject constructor(
+class ShoppingListItemViewModel @Inject constructor(
     private val repository: ShoppingListRepository
 ) : ViewModel() {
 
@@ -21,6 +21,9 @@ class ListDetailViewModel @Inject constructor(
 
     private val _addState = MutableStateFlow<Resource<Unit>?>(null)
     val addState: StateFlow<Resource<Unit>?> = _addState
+
+    private val _actionState = MutableStateFlow<Resource<Unit>?>(null)
+    val actionState: StateFlow<Resource<Unit>?> = _actionState
 
     private var currentListId: String = ""
 
@@ -38,17 +41,19 @@ class ListDetailViewModel @Inject constructor(
         }
     }
 
-    fun toggleChecked(itemId: String, isChecked: Boolean) {
+    fun toggleItem(itemId: String, isChecked: Boolean) {
         viewModelScope.launch {
             repository.toggleItemChecked(currentListId, itemId, isChecked)
         }
     }
 
-    fun removeItem(itemId: String) {
+    fun removeItem(itemId: String, isChecked: Boolean) {
         viewModelScope.launch {
-            repository.removeItem(currentListId, itemId)
+            _actionState.value = repository.removeItem(currentListId, itemId, isChecked)
         }
     }
 
     fun resetAddState() { _addState.value = null }
+
+    fun resetActionState() { _actionState.value = null }
 }

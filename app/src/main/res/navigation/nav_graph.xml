@@ -5,7 +5,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/splashFragment">
 
-    <!-- Splash Screen -->
+    <!-- Auth Flow -->
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.smartshop.app.ui.splash.SplashFragment"
@@ -27,7 +27,6 @@
             app:popUpToInclusive="true"/>
     </fragment>
 
-    <!-- Onboarding -->
     <fragment
         android:id="@+id/onboardingFragment"
         android:name="com.smartshop.app.ui.onboarding.OnboardingFragment"
@@ -39,7 +38,6 @@
             app:popUpToInclusive="true"/>
     </fragment>
 
-    <!-- Login -->
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.smartshop.app.ui.auth.LoginFragment"
@@ -57,7 +55,6 @@
             app:destination="@id/forgotPasswordFragment"/>
     </fragment>
 
-    <!-- Register -->
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.smartshop.app.ui.auth.RegisterFragment"
@@ -69,7 +66,12 @@
             app:popUpToInclusive="true"/>
     </fragment>
 
-    <!-- Home -->
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.smartshop.app.ui.auth.ForgotPasswordFragment"
+        android:label="Forgot Password"/>
+
+    <!-- Main App Flow -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.smartshop.app.ui.home.HomeFragment"
@@ -86,10 +88,28 @@
         <action
             android:id="@+id/action_home_to_shoppingLists"
             app:destination="@id/shoppingListsFragment"/>
+        <action
+            android:id="@+id/action_home_to_profile"
+            app:destination="@id/profileFragment"/>
 
     </fragment>
 
-    <!-- Product Detail -->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.smartshop.app.ui.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profile_to_tracker"
+            app:destination="@id/spendingTrackerFragment"/>
+        <action
+            android:id="@+id/action_profile_to_orders"
+            app:destination="@id/ordersFragment"/>
+        <action
+            android:id="@+id/action_profile_to_shoppingLists"
+            app:destination="@id/shoppingListsFragment"/>
+    </fragment>
+
     <fragment
         android:id="@+id/productDetailFragment"
         android:name="com.smartshop.app.ui.product.ProductDetailFragment"
@@ -102,7 +122,16 @@
             app:destination="@id/priceCompareFragment"/>
     </fragment>
 
-    <!-- Cart -->
+    <fragment
+        android:id="@+id/priceCompareFragment"
+        android:name="com.smartshop.app.ui.compare.PriceCompareFragment"
+        android:label="Price Compare"
+        tools:layout="@layout/fragment_price_compare">
+        <argument
+            android:name="productName"
+            app:argType="string"/>
+    </fragment>
+
     <fragment
         android:id="@+id/cartFragment"
         android:name="com.smartshop.app.ui.cart.CartFragment"
@@ -112,7 +141,6 @@
             app:destination="@id/checkoutFragment"/>
     </fragment>
 
-    <!-- Checkout -->
     <fragment
         android:id="@+id/checkoutFragment"
         android:name="com.smartshop.app.ui.checkout.CheckoutFragment"
@@ -124,33 +152,36 @@
             app:popUpToInclusive="true"/>
     </fragment>
 
-    <!-- Orders -->
     <fragment
         android:id="@+id/ordersFragment"
         android:name="com.smartshop.app.ui.orders.OrdersFragment"
-        android:label="Orders"/>
+        android:label="Orders">
+        <action
+            android:id="@+id/action_orders_to_tracker"
+            app:destination="@id/spendingTrackerFragment"/>
+    </fragment>
 
     <fragment
-        android:id="@+id/forgotPasswordFragment"
-        android:name="com.smartshop.app.ui.auth.ForgotPasswordFragment"
-        android:label="Forgot Password"/>
+        android:id="@+id/spendingTrackerFragment"
+        android:name="com.smartshop.app.ui.tracker.SpendingTrackerFragment"
+        android:label="Spending Tracker"
+        tools:layout="@layout/fragment_spending_tracker"/>
 
-    <!-- Shopping Lists -->
+    <!-- Shopping List Flow -->
     <fragment
         android:id="@+id/shoppingListsFragment"
         android:name="com.smartshop.app.ui.shoppinglist.ShoppingListsFragment"
-        android:label="ShoppingListsFragment"
+        android:label="Shopping Lists"
         tools:layout="@layout/fragment_shopping_lists">
         <action
             android:id="@+id/action_shoppingLists_to_listDetail"
             app:destination="@id/listDetailFragment"/>
     </fragment>
 
-    <!-- List Detail -->
     <fragment
         android:id="@+id/listDetailFragment"
         android:name="com.smartshop.app.ui.shoppinglist.ListDetailFragment"
-        android:label="ListDetailFragment"
+        android:label="List Detail"
         tools:layout="@layout/fragment_list_detail">
         <argument
             android:name="listId"
@@ -166,20 +197,11 @@
     <fragment
         android:id="@+id/productPickerFragment"
         android:name="com.smartshop.app.ui.shoppinglist.ProductPickerFragment"
-        android:label="ProductPickerFragment"
+        android:label="Product Picker"
         tools:layout="@layout/fragment_product_picker">
         <argument
             android:name="listId"
             app:argType="string"/>
     </fragment>
 
-    <fragment
-        android:id="@+id/priceCompareFragment"
-        android:name="com.smartshop.app.ui.compare.PriceCompareFragment"
-        android:label="PriceCompareFragment"
-        tools:layout="@layout/fragment_price_compare">
-        <argument
-            android:name="productName"
-            app:argType="string"/>
-    </fragment>
 </navigation>

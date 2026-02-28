@@ -10,10 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.smartshop.app.data.model.ShoppingListItem
-import com.smartshop.app.databinding.FragmentListDetailBinding
 import com.smartshop.app.data.model.Resource
+import com.smartshop.app.databinding.FragmentListDetailBinding
 import com.smartshop.app.utils.gone
 import com.smartshop.app.utils.showSnackbar
 import com.smartshop.app.utils.visible
@@ -26,9 +24,10 @@ class ListDetailFragment : Fragment() {
 
     private var _binding: FragmentListDetailBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: ListDetailViewModel by viewModels()
+
+    private val viewModel: ShoppingListItemViewModel by viewModels()
     private val args: ListDetailFragmentArgs by navArgs()
-    private lateinit var itemAdapter: ListItemAdapter
+    private lateinit var itemsAdapter: ShoppingListItemAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,24 +40,46 @@ class ListDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.listTitle.text = args.listName
-        viewModel.loadItems(args.listId)
+
         setupRecyclerView()
         setupButtons()
         observeItems()
+        observeActionState()
+
+        viewModel.loadItems(args.listId)
+    }
+
+    private fun observeActionState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.actionState.collectLatest { state ->
+                when (state) {
+                    is Resource.Error -> {
+                        binding.root.showSnackbar(state.message)
+                        viewModel.resetActionState()
+                    }
+                    is Resource.Success -> {
+                        // Optionally show "Item removed" snackbar
+                        viewModel.resetActionState()
+                    }
+                    else -> {}
+                }
+            }
+        }
     }
 
     private fun setupRecyclerView() {
-        itemAdapter = ListItemAdapter(
+        itemsAdapter = ShoppingListItemAdapter(
             onCheckedChange = { item, isChecked ->
-                viewModel.toggleChecked(item.id, isChecked)
+                viewModel.toggleItem(item.id, isChecked)
             },
-            onRemoveClick = { item ->
-                viewModel.removeItem(item.id)
+            onDeleteClick = { item ->
+                viewModel.removeItem(item.id, item.isChecked)
             }
         )
         binding.itemsRecyclerView.apply {
-            adapter = itemAdapter
+            adapter = itemsAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
     }
@@ -68,15 +89,10 @@ class ListDetailFragment : Fragment() {
             findNavController().popBackStack()
         }
         binding.addItemFab.setOnClickListener {
-            showAddItemDialog()
+            val action = ListDetailFragmentDirections
+                .actionListDetailToProductPicker(args.listId)
+            findNavController().navigate(action)
         }
-    }
-
-    private fun showAddItemDialog() {
-        // Navigate to product picker — user picks from existing products
-        findNavController().navigate(
-            ListDetailFragmentDirections.actionListDetailToProductPicker(args.listId)
-        )
     }
 
     private fun observeItems() {
@@ -89,16 +105,22 @@ class ListDetailFragment : Fragment() {
                     }
                     is Resource.Success -> {
                         binding.progressBar.gone()
+
                         val items = state.data
+                        val checked = items.count { it.isChecked }
+                        val total = items.size
+
+                        // Update progress summary in header e.g. "1/3"
+                        binding.progressSummary.text = "$checked/$total"
+
                         if (items.isEmpty()) {
                             binding.emptyContainer.visible()
                             binding.itemsRecyclerView.gone()
                         } else {
                             binding.emptyContainer.gone()
                             binding.itemsRecyclerView.visible()
-                            itemAdapter.submitList(items)
-                            val checked = items.count { it.isChecked }
-                            binding.progressSummary.text = "$checked/${items.size}"
+                            // submitSorted puts unchecked first, checked at bottom
+                            itemsAdapter.submitSorted(items)
                         }
                     }
                     is Resource.Error -> {
